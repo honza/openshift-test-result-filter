@@ -254,11 +254,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	cache, err := CreateOriginTestCache(*originTreePath)
+	var cache OriginCache
 
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	if *originTreePath != "" {
+		cache, err = CreateOriginTestCache(*originTreePath)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 
 	for _, entry := range entries {
@@ -297,16 +301,20 @@ func main() {
 			}
 		}
 
-		found, sl, err := FindTestSource(*originTreePath, cache, entry)
+		if *originTreePath != "" {
 
-		if err != nil {
-			fmt.Println("ERR:", err)
-		}
+			found, sl, err := FindTestSource(*originTreePath, cache, entry)
 
-		if found {
-			fmt.Println(sl.PrettyString())
-		} else {
-			fmt.Println("Source not found")
+			if err != nil {
+				fmt.Println("ERR:", err)
+			}
+
+			if found {
+				fmt.Println(sl.PrettyString())
+			} else {
+				fmt.Println("Source not found")
+			}
+
 		}
 
 		if *result == "failed" || *result == "all" {
